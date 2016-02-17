@@ -2269,7 +2269,7 @@ def test_factor():
     assert factor_list((2*x)**y, x) == (1, [(2, y), (x, y)])
     assert factor_list(sqrt(x*y), x) == (1, [(x*y, S.Half)])
 
-    assert factor(6) == 6 and factor(6).is_Integer
+    assert factor(6).expand() == 6 and factor(6).expand().is_Integer
 
     assert factor_list(3*x) == (3, [(x, 1)])
     assert factor_list(3*x**2) == (3, [(x, 2)])

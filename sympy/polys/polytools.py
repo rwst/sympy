@@ -5993,8 +5993,8 @@ def factor_list(f, *gens, **args):
 @public
 def factor(f, *gens, **args):
     """
-    Compute the factorization of expression, ``f``, into irreducibles. (To
-    factor an integer into primes, use ``factorint``.)
+    Compute the factorization of expression, ``f``, into irreducibles.
+    Integers and rationals are factored into primes.
 
     There two modes implemented: symbolic and formal. If ``f`` is not an
     instance of :class:`Poly` and generators are not specified, then the
@@ -6045,12 +6045,29 @@ def factor(f, *gens, **args):
     >>> factor(eq, deep=True)
     2**((x + 1)**2)
 
+    Integer and rational factorizations show as products
+    and fractions of products:
+
+    >>> from sympy import S
+    >>> factor(987)
+    3**1*47**1*7**1
+    >>> factor(S(987)/4)
+    3**1*47**1*7**1/2**2
+
     See Also
     ========
     sympy.ntheory.factor_.factorint
+    sympy.ntheory.factor_.factorrat
 
     """
+    from sympy.ntheory.factor_ import (factorint, factorrat)
+    from sympy.core.numbers import (Integer, Rational)
+
     f = sympify(f)
+    if isinstance(f, Integer):
+        return factorint(f, visual=True)
+    if isinstance(f, Rational):
+        return factorrat(f, visual=True)
     if args.pop('deep', False):
         partials = {}
         muladd = f.atoms(Mul, Add)
