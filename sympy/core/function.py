@@ -730,6 +730,15 @@ class AppliedUndef(Function):
         func = sage.function(fname)(*args)
         return func
 
+class UndefSage(object):
+    def __get__(self, ins, typ):
+        from sage.calculus.var import function
+        if ins is None:
+            return lambda: function(typ.__name__)
+        else:
+            args = [arg._sage_() for arg in ins.args]
+            return lambda : function(ins.__class__.__name__)(*args)
+
 class UndefinedFunction(FunctionClass):
     """
     The (meta)class of undefined functions.
@@ -737,6 +746,7 @@ class UndefinedFunction(FunctionClass):
     def __new__(mcl, name, **kwargs):
         ret = BasicMeta.__new__(mcl, name, (AppliedUndef,), kwargs)
         ret.__module__ = None
+        ret._sage_ = UndefSage()
         return ret
 
     def __instancecheck__(cls, instance):
